@@ -1,0 +1,8 @@
+.DS_Store
+.dart_tool/
+.history
+
+.packages
+.pub/
+
+build/

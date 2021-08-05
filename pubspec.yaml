@@ -1,0 +1,26 @@
+name: flutter_acs_bt_evk
+version: 1.0.1+1
+author:
+homepage:
+description: ACS蓝牙NFC读卡器插件
+
+environment:
+  sdk: ">=2.7.0 <3.0.0"
+  flutter: ">=1.20.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  plugin:
+    platforms:
+      android:
+        package: com.flutter.flutter_acs_bt_evk
+        pluginClass: FlutterAcsBtEvkPlugin
+      ios:
+        pluginClass: FlutterAcsBtEvkPlugin

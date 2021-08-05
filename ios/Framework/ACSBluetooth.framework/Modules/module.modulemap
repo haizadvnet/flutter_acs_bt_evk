@@ -1,0 +1,6 @@
+framework module ACSBluetooth {
+  umbrella header "ACSBluetooth.h"
+
+  export *
+  module * { export * }
+}
