@@ -2,7 +2,6 @@
 
 ACS Bluetooth NFC Card Reader Plugin
 - Author : xiaobug0929
-- Contributor : syafdes
 - iOS & Android
 
 ## Getting Started
