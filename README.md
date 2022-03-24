@@ -1,7 +1,8 @@
 # flutter_acs_bt_evk
 
 ACS Bluetooth NFC Card Reader Plugin
-Author : xiaobug0929
+- Author : xiaobug0929
+- Contributor : syafdes
 
 ## Getting Started
 
