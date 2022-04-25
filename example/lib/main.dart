@@ -22,7 +22,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('ACS插件Demo'),
+        title: Text('NFC ACS Demo'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -44,10 +44,10 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton(
                   onPressed: () async {
                     initListener();
-                    notifyText('开始连接...');
+                    notifyText('start connecting...');
                     await acs.connectDevice(address);
                   },
-                  child: Text('打开'),
+                  child: Text('Start'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
@@ -56,7 +56,7 @@ class _HomePageState extends State<HomePage> {
                       text = '';
                     });
                   },
-                  child: Text('关闭'),
+                  child: Text('End'),
                 ),
               ],
             ),
@@ -71,83 +71,77 @@ class _HomePageState extends State<HomePage> {
                 ElevatedButton(
                   onPressed: () async {
                     if (await Permission.location.request().isGranted) {
-                      print('已获取权限');
+                      print('Permission has been obtained');
                     }
                     await acs.scanDevice(true);
                   },
-                  child: Text('扫描设备'),
+                  child: Text('Scan'),
                 ),
-                ElevatedButton(
+                /*ElevatedButton(
                   onPressed: () async {
                     await acs.scanDevice(false);
                   },
-                  child: Text('停止扫描'),
-                ),
+                  child: Text('Close'),
+                ),*/
                 ElevatedButton(
                   onPressed: () async {
                     await acs.connectDevice(address);
                   },
-                  child: Text('连接设备'),
+                  child: Text('Connect'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     await acs.disconnectDevice();
                   },
-                  child: Text('断开连接'),
+                  child: Text('Disconnect'),
                 ),
-                ElevatedButton(
+                /*ElevatedButton(
                   onPressed: () async {
                     await acs.authenticate();
                   },
-                  child: Text('身份认证'),
+                  child: Text('Authenticate'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     await acs.startPolling();
                   },
-                  child: Text('开启轮询'),
+                  child: Text('Start Poll'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     await acs.stopPolling();
                   },
-                  child: Text('停止轮询'),
+                  child: Text('Stop Poll'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     await acs.powerOnCard();
                   },
-                  child: Text('卡片上电'),
+                  child: Text('Card On'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     await acs.powerOffCard();
                   },
-                  child: Text('卡片下电'),
+                  child: Text('Card off'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     await acs.transmitApdu('FFCA000000');
                   },
-                  child: Text('获取卡号'),
+                  child: Text('Card Number'),
                 ),
                 ElevatedButton(
                   onPressed: () async {
                     await acs.transmitEscapeCommand('E000004804');
                   },
-                  child: Text('禁用休眠'),
-                ),
+                  child: Text('Disable Hibernate'),
+                ),*/
                 ElevatedButton(
                   onPressed: () async {
                     await acs.getBatteryLevel();
                   },
-                  child: Text('获取电量'),
-                ),
-                ElevatedButton(
-                  onPressed: () async {
-                    await acs.clear();
-                  },
-                  child: Text('销毁'),
+                  child: Text('Battery'),
                 ),
               ],
             ),
@@ -157,10 +151,10 @@ class _HomePageState extends State<HomePage> {
                 if (!isBluetoothEnable) {
                   _openBluetooth();
                 } else {
-                  print('main.dart:163 --> ${'蓝牙已经打开,可以使用'}');
+                  print('main.dart:163 --> ${'Bluetooth is turned on and can be used'}');
                 }
               },
-              child: Text('打开蓝牙'),
+              child: Text('On Bluetooth'),
             ),
           ],
         ),
@@ -168,17 +162,17 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  /// 打开蓝牙提醒
+  /// Turn on bluetooth reminders
   _openBluetooth() async {
     bool isOpen = await showDialog(
         context: context,
         builder: (ctx) {
           return AlertDialog(
             title: Text(
-              '打开蓝牙提醒',
+              'Turn on bluetooth reminders',
             ),
             content: Text(
-              '蓝牙暂未打开，是否确定打开蓝牙？',
+              'Bluetooth is not turned on yet, are you sure you want to turn on bluetooth?？',
             ),
             actions: [
               FlatButton(
@@ -186,7 +180,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.of(context).pop(false);
                 },
                 child: Text(
-                  '取消',
+                  'Cancel',
                 ),
               ),
               FlatButton(
@@ -194,7 +188,7 @@ class _HomePageState extends State<HomePage> {
                   Navigator.of(context).pop(true);
                 },
                 child: Text(
-                  '确定',
+                  'Yes',
                 ),
               )
             ],
@@ -204,45 +198,43 @@ class _HomePageState extends State<HomePage> {
       acs.openBluetooth();
     }
   }
-
   void initListener() {
     acs.onEscapeResponseAvailableCallback = (String response) {
       if ("E1 00 00 00 01 04" == response) {
-        notifyText("onEscapeResponseAvailableCallback:禁用休眠设置成功");
+        notifyText("Disable hibernate setting succeeded");
       }
     };
     acs.onBatteryLevelAvailableCallback = (int batteryLevel) {
-      notifyText("onBatteryLevelAvailableCallback:电池电量:$batteryLevel");
+      notifyText("Battery : $batteryLevel" + "%");
     };
     acs.onEnableNotificationCompleteCallback = () {
-      notifyText("onEnableNotificationCompleteCallback:设备已连接");
+      notifyText("Device is connected");
       acs.authenticate();
     };
     acs.onAuthenticationCompleteCallback = () {
-      notifyText("onAuthenticationCompleteCallback:设备已授权");
+      notifyText("Device is authorized");
       acs.startPolling();
     };
     acs.onCardStatusChangeCallback = (int cardStatus) {
       if (cardStatus == 2) {
-        notifyText("onCardStatusChangeCallback:有卡");
+        notifyText("Card is available");
         acs.powerOnCard();
       } else {
-        notifyText("onCardStatusChangeCallback:无卡");
+        notifyText("No card found");
         acs.powerOffCard();
       }
     };
     acs.onAtrAvailableCallback = (String atr) {
-      notifyText("onAtrAvailableCallback:卡片已连接");
+      notifyText("Card is connected");
       acs.transmitApdu('FFCA000000');
     };
     acs.onResponseApduAvailableCallback = (String response) {
-      notifyText(
-          "onResponseApduAvailableCallback:卡号:${response.substring(0, 14)}");
+      notifyText("Card number: ${response.substring(0, 14)}");
     };
     acs.onLeScanCallback = (List devices) {
       BluetoothDevice device = devices.first;
       address = device.address;
-      print('发现设备:$device');
+      notifyText('Device discovery: $address');
     };
   }
 

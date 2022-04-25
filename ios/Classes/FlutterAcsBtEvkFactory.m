@@ -116,7 +116,7 @@
 }
 
 #pragma mark - method
-/// 初始化蓝牙参数
+/// Initialize Bluetooth parameters
 - (void)initParams{
     _centralManager = [[CBCentralManager alloc] initWithDelegate:self queue:nil];
     _bluetoothReaderManager = [[ABTBluetoothReaderManager alloc] init];
@@ -128,7 +128,7 @@
     _escapeCommand = [ABDHex byteArrayFromHexString:@"04 00"];
 }
 
-/// 开始扫描设备
+/// Start scanning for devices
 - (void)startScanPeripherals {
     if ([self ABD_checkBluetooth]) {
         if (_centralManager != nil) {
@@ -149,14 +149,14 @@
     }
 }
 
-/// 停止扫描设备
+/// Stop scanning for devices
 - (void)stopScanPeripherals {
     if (_centralManager != nil) {
         [_centralManager stopScan];
     }
 }
 
-/// 链接设备
+/// link device
 /// deviceAddress: 即扫描设备时传递回去的name
 - (void)connectDevice:(NSString *)deviceAddress {
     [self stopScanPeripherals];
@@ -175,7 +175,7 @@
     }
 }
 
-/// 断开设备
+/// disconnect device
 - (void)disconnectDevice {
     if (_peripheral != nil) {
         [_centralManager cancelPeripheralConnection:_peripheral];
@@ -183,7 +183,7 @@
     }
 }
 
-/// 身份认证
+/// Authentication
 - (BOOL)authenticate {
     if (_bluetoothReader != nil) {
         return [_bluetoothReader authenticateWithMasterKey:_masterKey];
@@ -191,7 +191,7 @@
     return NO;
 }
 
-/// 开始卡片轮询
+/// Start card polling
 - (BOOL)startPolling {
     if (_bluetoothReader != nil) {
         if ([_bluetoothReader isKindOfClass:[ABTAcr1255uj1Reader class]]) {
@@ -203,7 +203,7 @@
     return NO;;
 }
 
-/// 结束轮询
+/// End poll
 - (BOOL)stopPolling {
     if (_bluetoothReader != nil) {
         if ([_bluetoothReader isKindOfClass:[ABTAcr1255uj1Reader class]]) {
@@ -215,7 +215,7 @@
     return NO;
 }
 
-/// 卡片上电
+/// Card power up
 - (BOOL)powerOnCard {
     if (_bluetoothReader != nil) {
         return [_bluetoothReader powerOnCard];
@@ -247,9 +247,9 @@
     return NO;
 }
 
-/// 销毁
+/// destroy
 - (void)clear {
-    NSLog(@"销毁");
+    NSLog(@"destroy");
     [self stopPolling];
     [self stopScanPeripherals];
     [self disconnectDevice];
@@ -257,12 +257,12 @@
     _peripheral = nil;
 }
 
-/// 获取蓝牙状态
+/// Get bluetooth status
 - (BOOL)isBluetoothEnabled {
     return [self ABD_checkBluetooth];
 }
 
-/// 打开蓝牙设置
+/// Open bluetooth settings
 - (void)openBluetooth {
     NSURL *url = [NSURL URLWithString:@"App-Prefs:root=Bluetooth"];
     if ([[UIApplication sharedApplication] canOpenURL:url]) {
@@ -341,16 +341,16 @@
             break;
 
         case CBCentralManagerStateUnsupported:
-            message = @"此设备不支持蓝牙低功耗.";
+            message = @"This device does not support Bluetooth Low Energy.";
             break;
 
         case CBCentralManagerStateUnauthorized:
-            message = @"此应用程序未被授权使用蓝牙低能耗.";
+            message = @"This application is not authorized to use Bluetooth Low Energy.";
             break;
 
         case CBCentralManagerStatePoweredOff:
             if (!firstRun) {
-                message = @"你必须在设置中打开蓝牙才能使用阅读器!!!";
+                message = @"You have to turn on bluetooth in settings to use the reader!!!";
             }
             break;
         case CBManagerStatePoweredOn:
@@ -369,13 +369,13 @@
     firstRun = NO;
 }
 
-/// 扫描设备回调
-/// 找到名称前缀为ACR的那个设备
+/// scan device callback
+/// Find the device whose name is prefixed with ACR
 - (void)centralManager:(CBCentralManager *)central didDiscoverPeripheral:(CBPeripheral *)peripheral advertisementData:(NSDictionary *)advertisementData RSSI:(NSNumber *)RSSI {
     NSMutableArray * temp = [NSMutableArray array];
     if ([peripheral.name hasPrefix:@"ACR"]) {
         [[DiscoverPeripheralManager shareManager].peripherals addObject:peripheral];
-        /// peripheral.identifier会根据设备的改变而变化,所以暂时放peripheral.name,name也是唯一的
+        /// The peripheral.identifier will change according to the change of the device, so temporarily put the peripheral.name, the name is also unique
         NSDictionary * arguments = @{
             @"name": peripheral.name,
             @"address": peripheral.name
@@ -387,14 +387,14 @@
     }
 }
 
-/// 链接设备的回调
+/// Callbacks for Linked Devices
 - (void)centralManager:(CBCentralManager *)central didConnectPeripheral:(CBPeripheral *)peripheral {
 
     // Detect the Bluetooth reader.
     [_bluetoothReaderManager detectReaderWithPeripheral:peripheral];
 }
 
-/// 设备连接失败
+/// Device connection failed
 - (void)centralManager:(CBCentralManager *)central didFailToConnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
 
     // Show the error
@@ -403,7 +403,7 @@
     }
 }
 
-/// 断开链接的回调
+/// Callback for disconnection
 - (void)centralManager:(CBCentralManager *)central didDisconnectPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
 
     if (error != nil) {
@@ -419,7 +419,7 @@
 }
 
 #pragma mark - Bluetooth Reader Manager
-/// 当检测到蓝牙阅读器时调用。
+/// Called when a bluetooth reader is detected
 - (void)bluetoothReaderManager:(ABTBluetoothReaderManager *)bluetoothReaderManager didDetectReader:(ABTBluetoothReader *)reader peripheral:(CBPeripheral *)peripheral error:(NSError *)error {
 
     if (error != nil) {
@@ -439,7 +439,7 @@
 }
 
 #pragma mark - Bluetooth Reader
-/// 设备连接成功
+/// Device connected successfully
 - (void)bluetoothReader:(ABTBluetoothReader *)bluetoothReader didAttachPeripheral:(CBPeripheral *)peripheral error:(NSError *)error {
 
     if (error != nil) {
@@ -454,7 +454,7 @@
     }
 }
 
-/// 设备信息
+/// Device Information
 - (void)bluetoothReader:(ABTBluetoothReader *)bluetoothReader didReturnDeviceInfo:(NSObject *)deviceInfo type:(ABTBluetoothReaderDeviceInfo)type error:(NSError *)error {
 
     // Show the error
@@ -506,7 +506,7 @@
     }
 }
 
-/// 身份验证回调
+/// Authentication callback
 - (void)bluetoothReader:(ABTBluetoothReader *)bluetoothReader didAuthenticateWithError:(NSError *)error {
 
     if (error != nil) {
@@ -519,7 +519,7 @@
     }
 }
 
-/// atr回调
+/// atr callback
 - (void)bluetoothReader:(ABTBluetoothReader *)bluetoothReader didReturnAtr:(NSData *)atr error:(NSError *)error {
 
     if (error != nil) {
@@ -663,15 +663,15 @@
     switch (_centralManager.state) {
 
         case CBCentralManagerStateUnsupported:
-            message = @"此设备不支持蓝牙低功耗.";
+            message = @"This device does not support Bluetooth Low Energy.";
             break;
 
         case CBCentralManagerStateUnauthorized:
-            message = @"此应用程序未被授权使用蓝牙低能耗.";
+            message = @"This application is not authorized to use Bluetooth Low Energy.";
             break;
 
         case CBCentralManagerStatePoweredOff:
-            message = @"你必须在设置中打开蓝牙才能使用阅读器!!!";
+            message = @"You have to turn on bluetooth in settings to use the reader!!!";
             break;
 
         case CBCentralManagerStatePoweredOn:
