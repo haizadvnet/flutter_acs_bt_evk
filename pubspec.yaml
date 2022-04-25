@@ -2,7 +2,7 @@ name: flutter_acs_bt_evk
 version: 1.0.1+1
 author:
 homepage:
-description: ACS蓝牙NFC读卡器插件
+description: ACS Bluetooth NFC Reader Plugin
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
