@@ -15,9 +15,12 @@ buildscript {
 rootProject.allprojects {
     repositories {
         //公司maven私服
-        maven { url 'http://36.110.47.20:8082/repository/Kingtrol/' }
         google()
         jcenter()
+        flatDir {
+            dirs project(':flutter_acs_bt_evk').file('libs')
+            // e.g. dirs project(':url_launcher').file('libs')  - don't miss the ':'
+        }
 
     }
 }
@@ -37,9 +40,10 @@ android {
 }
 
 dependencies {
+    implementation (name: 'acsbt-1.0.1', ext: 'aar')
 //    compileOnly files("$flutterRoot/bin/cache/artifacts/engine/android-arm/flutter.jar")
 //    compileOnly files("/Users/lijianbin/Library/Application Support/fvm/versions/stable/bin/cache/artifacts/engine/android-arm-release/flutter.jar")
 //    compileOnly 'androidx.annotation:annotation:1.1.0'
-    implementation("com.ljb.support:acsbt:1.0.1")
+    // implementation("com.ljb.support:acsbt:1.0.1")
 
 }
